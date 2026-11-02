@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-"""
-Check every line of a requirements.txt against PyPI.
-
-For each `name==version` line we report:
-  1. Dependencies checked      - number of lines in the file
-  2. Not found on PyPI         - package missing, or the pinned release missing
-  3. Incompatible with 3.11    - release exists but requires_python excludes 3.11
-  4. Highest requirement       - among existing releases that DO declare a
-                                 requires_python, the one with the highest
-                                 minimum Python version
-
-Target interpreter is hard-coded to 3.11, regardless of the Python running this.
-"""
-
 import json
 import sys
 import urllib.error
@@ -26,7 +11,7 @@ API = "https://pypi.org/pypi"
 
 
 def fetch(url):
-    """Return parsed JSON, or None on 404."""
+    """for Return parsed JSON, or None on 404."""
     req = urllib.request.Request(url, headers={"User-Agent": "dep-checker/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
@@ -38,7 +23,7 @@ def fetch(url):
 
 
 def parse_line(line):
-    """'django==4.2' -> ('django', '4.2'). Returns None for unpinned lines."""
+    
     if "==" not in line:
         return None
     name, _, version = line.partition("==")
@@ -46,10 +31,7 @@ def parse_line(line):
 
 
 def min_python(spec_text):
-    """
-    Lowest Python version allowed by a requires_python string.
-    Returns None if it imposes no lower bound.
-    """
+
     try:
         spec = SpecifierSet(spec_text)
     except InvalidSpecifier:
@@ -98,8 +80,7 @@ def main(path):
 
         rp = release["info"].get("requires_python") or ""
         if not rp.strip():
-            # No requires_python => counts as compatible, and is not a
-            # candidate for "highest requirement".
+           
             print(f"  [ok] {line}  requires_python=<none>", file=sys.stderr)
             continue
 
